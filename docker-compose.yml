@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  react-docker-app:
+    container_name: react-docker-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm start
+    restart: always
+    volumes:
+      - .:/usr/src/app:cached
+      - /usr/src/app/node_modules
+    ports:
+      - "3000:3000"

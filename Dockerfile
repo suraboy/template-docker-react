@@ -1,17 +1,23 @@
-# base image
-FROM node:9.11
+FROM node:lts-alpine
 
-# set working directory
-RUN mkdir /usr/src/app
-WORKDIR /usr/src/app
+# install simple http server for serving static content
+RUN npm install -g http-server
 
-# add `/usr/src/app/node_modules/.bin` to $PATH
-ENV PATH /usr/src/app/node_modules/.bin:$PATH
+# make the 'app' folder the current working directory
+WORKDIR /app
 
-# install and cache app dependencies
-COPY package.json /usr/src/app/package.json
+# copy both 'package.json' and 'package-lock.json' (if available)
+COPY package*.json ./
+
+# install project dependencies
 RUN npm install
-RUN npm install react-scripts -g
 
-# start app
-CMD ["npm", "start"]
+# copy project files and folders to the current working directory (i.e. 'app' folder)
+COPY . .
+
+# build app for production with minification
+RUN npm run build
+
+EXPOSE 3000
+
+CMD npm start
